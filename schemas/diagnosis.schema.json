@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-model-doctor.local/schemas/diagnosis.schema.json",
+  "title": "AI Model Doctor Diagnosis Report",
+  "description": "Rule-based diagnostic results derived from a normalized YOLO evaluation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evaluation_schema_version",
+    "generated_at",
+    "engine",
+    "summary",
+    "diagnoses"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "evaluation_schema_version": {"const": "0.1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "rules_version"],
+      "properties": {
+        "name": {"const": "ai-model-doctor-rule-engine"},
+        "version": {"type": "string", "minLength": 1},
+        "rules_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["overall_status", "pass", "warning", "insufficient_data"],
+      "properties": {
+        "overall_status": {
+          "enum": ["pass", "warning", "insufficient_data"]
+        },
+        "pass": {"type": "integer", "minimum": 0},
+        "warning": {"type": "integer", "minimum": 0},
+        "insufficient_data": {"type": "integer", "minimum": 0}
+      }
+    },
+    "diagnoses": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {"$ref": "#/$defs/diagnosis"}
+    }
+  },
+  "$defs": {
+    "diagnosis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "title",
+        "status",
+        "status_label",
+        "severity",
+        "confidence",
+        "observation",
+        "diagnosis",
+        "evidence",
+        "possible_causes",
+        "recommended_checks"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "insufficient_training_history",
+            "precision_recall_imbalance",
+            "training_plateau",
+            "suspected_overfitting",
+            "post_peak_degradation"
+          ]
+        },
+        "title": {"type": "string", "minLength": 1},
+        "status": {
+          "enum": ["pass", "warning", "insufficient_data"]
+        },
+        "status_label": {
+          "enum": ["이상 징후 없음", "확인 필요", "판단 보류"]
+        },
+        "severity": {
+          "enum": ["none", "low", "medium", "high"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "observation": {"type": "string", "minLength": 1},
+        "diagnosis": {"type": "string", "minLength": 1},
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "possible_causes": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "recommended_checks": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric", "observed", "operator", "threshold"],
+      "properties": {
+        "metric": {"type": "string", "minLength": 1},
+        "observed": {
+          "type": ["number", "integer", "string", "null"]
+        },
+        "operator": {
+          "enum": ["<", "<=", ">", ">=", "==", "!=", "not_available"]
+        },
+        "threshold": {
+          "type": ["number", "integer", "string", "null"]
+        }
+      }
+    }
+  }
+}

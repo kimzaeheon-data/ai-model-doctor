@@ -1,0 +1,9 @@
+.venv/
+.ultralytics/
+__pycache__/
+*.py[cod]
+
+# Generated models, datasets, runs, and normalized outputs
+artifacts/
+*.pt
+evaluation.json

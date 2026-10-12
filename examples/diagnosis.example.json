@@ -1,0 +1,128 @@
+{
+  "schema_version": "0.1.0",
+  "evaluation_schema_version": "0.1.0",
+  "generated_at": "2026-10-12T18:30:00+09:00",
+  "engine": {
+    "name": "ai-model-doctor-rule-engine",
+    "version": "0.1.0",
+    "rules_version": "0.1.0"
+  },
+  "summary": {
+    "overall_status": "insufficient_data",
+    "pass": 0,
+    "warning": 0,
+    "insufficient_data": 5
+  },
+  "diagnoses": [
+    {
+      "code": "insufficient_training_history",
+      "title": "학습 기록 부족",
+      "status": "insufficient_data",
+      "status_label": "판단 보류",
+      "severity": "none",
+      "confidence": 1.0,
+      "observation": "학습 기록이 1 epoch만 존재합니다.",
+      "diagnosis": "학습 추세를 판단하기 위한 기록이 부족합니다.",
+      "evidence": [
+        {
+          "metric": "epochs_completed",
+          "observed": 1,
+          "operator": ">=",
+          "threshold": 10
+        }
+      ],
+      "possible_causes": [],
+      "recommended_checks": [
+        "최소 10 epoch 이상의 학습 결과로 다시 분석하세요."
+      ]
+    },
+    {
+      "code": "precision_recall_imbalance",
+      "title": "Precision·Recall 불균형",
+      "status": "insufficient_data",
+      "status_label": "판단 보류",
+      "severity": "none",
+      "confidence": 1.0,
+      "observation": "precision은 0.66849, recall은 0.65000이지만 학습 기록이 1 epoch뿐입니다.",
+      "diagnosis": "현재 차이가 모델의 안정적인 특성인지 판단할 수 없습니다.",
+      "evidence": [
+        {
+          "metric": "epochs_completed",
+          "observed": 1,
+          "operator": ">=",
+          "threshold": 3
+        }
+      ],
+      "possible_causes": [],
+      "recommended_checks": [
+        "최소 3 epoch 이상의 결과로 예비 진단을 다시 실행하세요."
+      ]
+    },
+    {
+      "code": "training_plateau",
+      "title": "학습 정체",
+      "status": "insufficient_data",
+      "status_label": "판단 보류",
+      "severity": "none",
+      "confidence": 1.0,
+      "observation": "정체 분석에 필요한 최소 10 epoch보다 기록이 짧습니다.",
+      "diagnosis": "mAP50-95의 최근 개선 추세를 판단할 수 없습니다.",
+      "evidence": [
+        {
+          "metric": "epochs_completed",
+          "observed": 1,
+          "operator": ">=",
+          "threshold": 10
+        }
+      ],
+      "possible_causes": [],
+      "recommended_checks": [
+        "최소 10 epoch 이상의 mAP50-95 기록을 제공하세요."
+      ]
+    },
+    {
+      "code": "suspected_overfitting",
+      "title": "과적합 의심",
+      "status": "insufficient_data",
+      "status_label": "판단 보류",
+      "severity": "none",
+      "confidence": 1.0,
+      "observation": "train loss와 validation loss의 추세를 비교할 기록이 부족합니다.",
+      "diagnosis": "현재 자료로 과적합 가능성을 판단할 수 없습니다.",
+      "evidence": [
+        {
+          "metric": "epochs_completed",
+          "observed": 1,
+          "operator": ">=",
+          "threshold": 10
+        }
+      ],
+      "possible_causes": [],
+      "recommended_checks": [
+        "최소 10 epoch 이상의 train 및 validation loss 기록을 제공하세요."
+      ]
+    },
+    {
+      "code": "post_peak_degradation",
+      "title": "최적 epoch 이후 성능 하락",
+      "status": "insufficient_data",
+      "status_label": "판단 보류",
+      "severity": "none",
+      "confidence": 1.0,
+      "observation": "최고 성능 이후의 변화를 비교할 학습 기록이 부족합니다.",
+      "diagnosis": "최적 epoch 이후 성능 하락 여부를 판단할 수 없습니다.",
+      "evidence": [
+        {
+          "metric": "epochs_completed",
+          "observed": 1,
+          "operator": ">=",
+          "threshold": 10
+        }
+      ],
+      "possible_causes": [],
+      "recommended_checks": [
+        "최소 10 epoch 이상의 학습 결과를 제공하세요."
+      ]
+    }
+  ]
+}

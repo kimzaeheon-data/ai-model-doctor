@@ -1,0 +1,33 @@
+version: 0.1.0
+
+# 공통 학습 기록 기준
+history:
+  preliminary_min_epochs: 3
+  reliable_min_epochs: 10
+
+# |precision - recall|이 이 값 이상이면 불균형 후보로 판단한다.
+precision_recall_imbalance:
+  warning_gap: 0.15
+  high_severity_gap: 0.30
+
+# 최근 window 구간의 mAP50-95 개선 폭으로 정체를 판단한다.
+training_plateau:
+  min_epochs: 10
+  window_ratio: 0.20
+  min_window_epochs: 5
+  max_map50_95_improvement: 0.005
+
+# 최근 구간에서 train loss와 validation loss가 반대로 움직이는지 확인한다.
+suspected_overfitting:
+  min_epochs: 10
+  window_ratio: 0.20
+  min_window_epochs: 5
+  min_train_loss_decrease_ratio: 0.10
+  min_validation_loss_increase_ratio: 0.10
+  max_map50_95_change: 0.005
+
+# 최고 성능 epoch 이후 충분히 오래 학습했고 최종 성능이 하락했는지 확인한다.
+post_peak_degradation:
+  min_epochs: 10
+  min_epochs_after_peak_ratio: 0.20
+  min_map50_95_drop: 0.01

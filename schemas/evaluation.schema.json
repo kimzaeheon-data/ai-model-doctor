@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-model-doctor.local/schemas/evaluation.schema.json",
+  "title": "AI Model Doctor YOLO Evaluation",
+  "description": "Normalized diagnostic input produced from an Ultralytics YOLO training result bundle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "created_at",
+    "source",
+    "model",
+    "training",
+    "dataset",
+    "metrics",
+    "artifacts",
+    "parser"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "required_files"],
+      "properties": {
+        "format": {
+          "const": "ultralytics-yolo-result"
+        },
+        "run_name": {
+          "type": ["string", "null"]
+        },
+        "ultralytics_version": {
+          "type": ["string", "null"]
+        },
+        "required_files": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["args_yaml", "results_csv"],
+          "properties": {
+            "args_yaml": {"type": "string", "minLength": 1},
+            "results_csv": {"type": "string", "minLength": 1}
+          }
+        },
+        "optional_files_found": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["framework", "task", "architecture"],
+      "properties": {
+        "framework": {"const": "ultralytics"},
+        "task": {"const": "detect"},
+        "architecture": {"type": "string", "minLength": 1},
+        "pretrained_checkpoint": {"type": ["string", "null"]},
+        "best_checkpoint": {"type": ["string", "null"]}
+      }
+    },
+    "training": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["epochs_configured", "epochs_completed", "batch", "imgsz"],
+      "properties": {
+        "epochs_configured": {"type": "integer", "minimum": 1},
+        "epochs_completed": {"type": "integer", "minimum": 0},
+        "batch": {"type": "integer", "minimum": 1},
+        "imgsz": {"type": "integer", "minimum": 32},
+        "device": {"type": ["string", "null"]},
+        "optimizer": {"type": ["string", "null"]},
+        "learning_rate_initial": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "learning_rate_final_ratio": {"type": ["number", "null"], "minimum": 0},
+        "weight_decay": {"type": ["number", "null"], "minimum": 0},
+        "patience": {"type": ["integer", "null"], "minimum": 0},
+        "seed": {"type": ["integer", "null"]},
+        "augmentation": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["number", "integer", "boolean", "string", "null"]
+          }
+        }
+      }
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["config_path", "config_reference", "class_names"],
+      "properties": {
+        "config_path": {"type": ["string", "null"]},
+        "config_reference": {"type": ["string", "null"]},
+        "class_names": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "train_image_count": {"type": ["integer", "null"], "minimum": 0},
+        "validation_image_count": {"type": ["integer", "null"], "minimum": 0},
+        "class_distribution": {
+          "type": ["object", "null"],
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "bounding_box_size_distribution": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["small", "medium", "large"],
+          "properties": {
+            "small": {"type": "integer", "minimum": 0},
+            "medium": {"type": "integer", "minimum": 0},
+            "large": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["best_epoch", "summary", "epochs"],
+      "properties": {
+        "best_epoch": {"type": "integer", "minimum": 0},
+        "summary": {"$ref": "#/$defs/metricSummary"},
+        "per_class": {
+          "type": ["array", "null"],
+          "items": {"$ref": "#/$defs/classMetric"}
+        },
+        "epochs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/epochMetric"}
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/artifact"}
+    },
+    "parser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "warnings"],
+      "properties": {
+        "name": {"const": "ai-model-doctor-yolo-parser"},
+        "version": {"type": "string", "minLength": 1},
+        "warnings": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "score": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "loss": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "metricSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["precision", "recall", "map50", "map50_95"],
+      "properties": {
+        "precision": {"$ref": "#/$defs/score"},
+        "recall": {"$ref": "#/$defs/score"},
+        "map50": {"$ref": "#/$defs/score"},
+        "map50_95": {"$ref": "#/$defs/score"},
+        "fitness": {"type": ["number", "null"]}
+      }
+    },
+    "classMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class_name", "precision", "recall", "map50", "map50_95"],
+      "properties": {
+        "class_name": {"type": "string", "minLength": 1},
+        "instances": {"type": ["integer", "null"], "minimum": 0},
+        "precision": {"$ref": "#/$defs/score"},
+        "recall": {"$ref": "#/$defs/score"},
+        "map50": {"$ref": "#/$defs/score"},
+        "map50_95": {"$ref": "#/$defs/score"}
+      }
+    },
+    "epochMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["epoch", "train", "validation"],
+      "properties": {
+        "epoch": {"type": "integer", "minimum": 0},
+        "elapsed_seconds": {"type": ["number", "null"], "minimum": 0},
+        "train": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["box_loss", "cls_loss", "dfl_loss"],
+          "properties": {
+            "box_loss": {"$ref": "#/$defs/loss"},
+            "cls_loss": {"$ref": "#/$defs/loss"},
+            "dfl_loss": {"$ref": "#/$defs/loss"}
+          }
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["box_loss", "cls_loss", "dfl_loss", "precision", "recall", "map50", "map50_95"],
+          "properties": {
+            "box_loss": {"$ref": "#/$defs/loss"},
+            "cls_loss": {"$ref": "#/$defs/loss"},
+            "dfl_loss": {"$ref": "#/$defs/loss"},
+            "precision": {"$ref": "#/$defs/score"},
+            "recall": {"$ref": "#/$defs/score"},
+            "map50": {"$ref": "#/$defs/score"},
+            "map50_95": {"$ref": "#/$defs/score"}
+          }
+        },
+        "learning_rate": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "path", "available_for_ai"],
+      "properties": {
+        "type": {
+          "enum": [
+            "confusion_matrix",
+            "confusion_matrix_normalized",
+            "pr_curve",
+            "f1_curve",
+            "precision_curve",
+            "recall_curve",
+            "results_plot",
+            "checkpoint_best",
+            "checkpoint_last",
+            "other"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": {"pattern": "^(?:/|[A-Za-z]:[\\\\/])"}
+        },
+        "media_type": {"type": ["string", "null"]},
+        "available_for_ai": {"type": "boolean"}
+      }
+    }
+  }
+}

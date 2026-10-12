@@ -1,0 +1,156 @@
+{
+  "schema_version": "0.1.0",
+  "created_at": "2026-10-12T18:10:00+09:00",
+  "source": {
+    "format": "ultralytics-yolo-result",
+    "run_name": "helmet-detection-v1",
+    "ultralytics_version": "8.x",
+    "required_files": {
+      "args_yaml": "args.yaml",
+      "results_csv": "results.csv"
+    },
+    "optional_files_found": [
+      "data.yaml",
+      "confusion_matrix.png",
+      "PR_curve.png",
+      "weights/best.pt"
+    ]
+  },
+  "model": {
+    "framework": "ultralytics",
+    "task": "detect",
+    "architecture": "yolo11n",
+    "pretrained_checkpoint": "yolo11n.pt",
+    "best_checkpoint": "weights/best.pt"
+  },
+  "training": {
+    "epochs_configured": 100,
+    "epochs_completed": 100,
+    "batch": 16,
+    "imgsz": 640,
+    "device": "0",
+    "optimizer": "auto",
+    "learning_rate_initial": 0.01,
+    "learning_rate_final_ratio": 0.01,
+    "weight_decay": 0.0005,
+    "patience": 20,
+    "seed": 0,
+    "augmentation": {
+      "mosaic": 1.0,
+      "mixup": 0.0,
+      "fliplr": 0.5
+    }
+  },
+  "dataset": {
+    "config_path": "data.yaml",
+    "config_reference": "data.yaml",
+    "class_names": ["person", "helmet"],
+    "train_image_count": 8000,
+    "validation_image_count": 2000,
+    "class_distribution": {
+      "person": 9200,
+      "helmet": 2100
+    },
+    "bounding_box_size_distribution": {
+      "small": 7400,
+      "medium": 3100,
+      "large": 800
+    }
+  },
+  "metrics": {
+    "best_epoch": 79,
+    "summary": {
+      "precision": 0.76,
+      "recall": 0.62,
+      "map50": 0.81,
+      "map50_95": 0.47,
+      "fitness": 0.504
+    },
+    "per_class": [
+      {
+        "class_name": "person",
+        "instances": 2250,
+        "precision": 0.88,
+        "recall": 0.89,
+        "map50": 0.92,
+        "map50_95": 0.61
+      },
+      {
+        "class_name": "helmet",
+        "instances": 510,
+        "precision": 0.64,
+        "recall": 0.35,
+        "map50": 0.7,
+        "map50_95": 0.33
+      }
+    ],
+    "epochs": [
+      {
+        "epoch": 1,
+        "elapsed_seconds": 92.4,
+        "train": {
+          "box_loss": 1.42,
+          "cls_loss": 0.91,
+          "dfl_loss": 1.17
+        },
+        "validation": {
+          "box_loss": 1.5,
+          "cls_loss": 0.97,
+          "dfl_loss": 1.21,
+          "precision": 0.41,
+          "recall": 0.32,
+          "map50": 0.38,
+          "map50_95": 0.19
+        },
+        "learning_rate": 0.00333
+      },
+      {
+        "epoch": 79,
+        "elapsed_seconds": 7180.2,
+        "train": {
+          "box_loss": 0.61,
+          "cls_loss": 0.37,
+          "dfl_loss": 0.83
+        },
+        "validation": {
+          "box_loss": 0.89,
+          "cls_loss": 0.69,
+          "dfl_loss": 0.98,
+          "precision": 0.76,
+          "recall": 0.62,
+          "map50": 0.81,
+          "map50_95": 0.47
+        },
+        "learning_rate": 0.0021
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "type": "confusion_matrix",
+      "path": "confusion_matrix.png",
+      "media_type": "image/png",
+      "available_for_ai": true
+    },
+    {
+      "type": "pr_curve",
+      "path": "PR_curve.png",
+      "media_type": "image/png",
+      "available_for_ai": true
+    },
+    {
+      "type": "checkpoint_best",
+      "path": "weights/best.pt",
+      "media_type": "application/octet-stream",
+      "available_for_ai": false
+    }
+  ],
+  "parser": {
+    "name": "ai-model-doctor-yolo-parser",
+    "version": "0.1.0",
+    "warnings": [
+      "Small-object AP was not available in the uploaded result files.",
+      "Checkpoint was indexed but not loaded for security."
+    ]
+  }
+}
