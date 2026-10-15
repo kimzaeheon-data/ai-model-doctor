@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-model-doctor.local/schemas/chat-response.schema.json",
+  "title": "AI Model Doctor Chat Response",
+  "description": "Structured explanation produced from evaluation and diagnosis results.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "answer_type",
+    "message",
+    "referenced_diagnoses",
+    "evidence",
+    "suggested_actions",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "answer_type": {
+      "enum": ["summary", "explanation", "follow_up", "clarification"]
+    },
+    "message": {"type": "string", "minLength": 1},
+    "referenced_diagnoses": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "insufficient_training_history",
+          "precision_recall_imbalance",
+          "training_plateau",
+          "suspected_overfitting",
+          "post_peak_degradation"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidence"}
+    },
+    "suggested_actions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/action"}
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "diagnosis_code", "metric", "observed", "comparison"],
+      "properties": {
+        "source": {
+          "enum": ["evaluation", "diagnosis"]
+        },
+        "diagnosis_code": {
+          "type": ["string", "null"]
+        },
+        "metric": {"type": "string", "minLength": 1},
+        "observed": {
+          "type": ["number", "integer", "string", "null"]
+        },
+        "comparison": {
+          "type": "string",
+          "minLength": 1,
+          "description": "측정값과 판단 기준의 관계를 설명하는 한국어 문장"
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "description", "requires_approval"],
+      "properties": {
+        "type": {
+          "enum": [
+            "collect_more_training_history",
+            "upload_data_yaml",
+            "inspect_metric",
+            "review_training_config",
+            "rerun_analysis",
+            "ask_clarifying_question"
+          ]
+        },
+        "description": {"type": "string", "minLength": 1},
+        "requires_approval": {"const": false}
+      }
+    }
+  }
+}

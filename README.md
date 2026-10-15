@@ -10,6 +10,8 @@ Ultralytics YOLO 객체 탐지 학습 결과를 표준 JSON으로 변환하고 �
 - 학습 설정과 epoch별 지표 정규화
 - 선택 그래프와 체크포인트 목록화
 - `evaluation.json` 생성
+- 규칙 기반 `diagnosis.json` 생성
+- OpenAI Responses API를 통한 구조화된 챗봇 응답 생성
 
 ## Parser 실행
 
@@ -30,6 +32,17 @@ python3 -m model_doctor.parser yolo-result.zip -o evaluation.json
 ```bash
 python3 -m model_doctor.diagnosis evaluation.json -o diagnosis.json
 ```
+
+## AI 진단 설명 생성
+
+OpenAI API 키를 환경변수로 설정한 뒤 평가와 진단 결과를 함께 전달합니다. 기본 모델은 `gpt-5.4-mini`이며 `OPENAI_MODEL`로 변경할 수 있습니다.
+
+```bash
+export OPENAI_API_KEY="your-api-key"
+python3 -m model_doctor.llm evaluation.json diagnosis.json "전체 결과를 요약해줘" -o chat-response.json
+```
+
+응답은 `schemas/chat-response.schema.json`을 따르며, 챗봇은 규칙 엔진의 판정을 설명할 뿐 상태를 다시 판정하거나 모델 설정을 변경하지 않습니다.
 
 ## 테스트
 

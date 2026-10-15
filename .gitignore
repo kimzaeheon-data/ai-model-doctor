@@ -2,6 +2,9 @@
 .ultralytics/
 __pycache__/
 *.py[cod]
+*.egg-info/
+.env
+.env.*
 
 # Generated models, datasets, runs, and normalized outputs
 artifacts/

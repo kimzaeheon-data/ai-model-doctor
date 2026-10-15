@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1.0",
+  "answer_type": "summary",
+  "message": "현재 다섯 진단은 모두 판단 보류 상태입니다. 학습 기록이 1 epoch뿐이어서 Precision·Recall 불균형, 학습 정체, 과적합 및 최고점 이후 성능 하락을 안정적으로 판단할 수 없습니다. 최소 10 epoch 이상 학습한 결과를 다시 분석하는 것을 권장합니다.",
+  "referenced_diagnoses": [
+    "insufficient_training_history",
+    "precision_recall_imbalance",
+    "training_plateau",
+    "suspected_overfitting",
+    "post_peak_degradation"
+  ],
+  "evidence": [
+    {
+      "source": "diagnosis",
+      "diagnosis_code": "insufficient_training_history",
+      "metric": "epochs_completed",
+      "observed": 1,
+      "comparison": "신뢰 가능한 추세 분석에는 10 epoch 이상이 필요합니다."
+    },
+    {
+      "source": "evaluation",
+      "diagnosis_code": "precision_recall_imbalance",
+      "metric": "precision_recall",
+      "observed": "precision 0.66849, recall 0.65",
+      "comparison": "값은 존재하지만 1 epoch 결과이므로 안정적인 특성으로 판단하지 않습니다."
+    }
+  ],
+  "suggested_actions": [
+    {
+      "type": "collect_more_training_history",
+      "description": "최소 10 epoch 이상 학습한 YOLO 결과를 준비하세요.",
+      "requires_approval": false
+    },
+    {
+      "type": "rerun_analysis",
+      "description": "새 학습 결과를 Parser와 규칙 엔진으로 다시 분석하세요.",
+      "requires_approval": false
+    }
+  ],
+  "limitations": [
+    "현재 결과만으로 모델의 학습 추세를 판단할 수 없습니다.",
+    "data.yaml이 없어 클래스 기반 분석을 수행할 수 없습니다."
+  ]
+}

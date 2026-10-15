@@ -3,11 +3,16 @@ name = "ai-model-doctor"
 version = "0.1.0"
 description = "Diagnostic tooling for Ultralytics YOLO training results"
 requires-python = ">=3.11"
-dependencies = ["PyYAML>=6.0"]
+dependencies = [
+    "jsonschema>=4.23",
+    "openai>=2.0",
+    "PyYAML>=6.0",
+]
 
 [project.scripts]
 model-doctor-parse = "model_doctor.parser:main"
 model-doctor-diagnose = "model_doctor.diagnosis:main"
+model-doctor-chat = "model_doctor.llm:main"
 
 [build-system]
 requires = ["setuptools>=68"]

@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1.0",
+  "answer_type": "follow_up",
+  "message": "현재 챗봇은 learning rate를 변경하거나 재학습을 실행할 권한이 없습니다. 또한 1 epoch 기록만으로는 learning rate를 낮춰야 한다는 진단 근거가 없습니다. 충분한 학습 기록을 먼저 수집하고 재분석한 뒤, 별도의 변경 계획과 사용자 승인 절차에서 설정 변경을 검토해야 합니다.",
+  "referenced_diagnoses": [
+    "insufficient_training_history",
+    "training_plateau",
+    "suspected_overfitting"
+  ],
+  "evidence": [
+    {
+      "source": "diagnosis",
+      "diagnosis_code": "insufficient_training_history",
+      "metric": "epochs_completed",
+      "observed": 1,
+      "comparison": "설정 변경 근거를 검토하려면 최소 10 epoch 이상의 추세가 필요합니다."
+    }
+  ],
+  "suggested_actions": [
+    {
+      "type": "collect_more_training_history",
+      "description": "설정을 변경하기 전에 최소 10 epoch 이상의 학습 결과를 수집하세요.",
+      "requires_approval": false
+    },
+    {
+      "type": "review_training_config",
+      "description": "재분석 후 learning rate 관련 진단 근거가 생겼는지 현재 설정과 함께 검토하세요.",
+      "requires_approval": false
+    }
+  ],
+  "limitations": [
+    "v0.1 진단 챗봇은 설정 파일을 수정하거나 학습 명령을 실행하지 않습니다.",
+    "구체적인 설정 변경은 향후 change-plan과 명시적 승인 절차에서만 다룹니다."
+  ]
+}
