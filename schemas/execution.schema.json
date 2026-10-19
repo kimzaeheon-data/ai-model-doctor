@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-model-doctor.local/schemas/execution.schema.json",
+  "title": "AI Model Doctor Candidate Execution",
+  "description": "승인된 변경으로 만든 격리 후보 실험의 실행 기록",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "execution_id",
+    "plan_id",
+    "approval_id",
+    "plan_digest",
+    "created_at",
+    "updated_at",
+    "status",
+    "candidate_directory",
+    "source_files",
+    "candidate_files",
+    "applied_change_ids",
+    "training",
+    "error"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "execution_id": {"type": "string", "pattern": "^execution-[a-f0-9]{12}$"},
+    "plan_id": {"type": "string", "minLength": 1},
+    "approval_id": {"type": "string", "minLength": 1},
+    "plan_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "status": {
+      "enum": ["prepared", "running", "completed", "failed", "timed_out", "interrupted"]
+    },
+    "candidate_directory": {"type": "string", "minLength": 1},
+    "source_files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["training", "inference"],
+      "properties": {
+        "training": {"type": ["string", "null"]},
+        "inference": {"type": ["string", "null"]}
+      }
+    },
+    "candidate_files": {
+      "type": "array",
+      "items": {"enum": ["candidate/args.yaml", "candidate/inference.yaml"]},
+      "uniqueItems": true
+    },
+    "applied_change_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "training": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "timeout_seconds", "return_code", "log_path", "checkpoint_directory"],
+      "properties": {
+        "command": {"type": "array", "items": {"type": "string"}},
+        "timeout_seconds": {"type": "integer", "minimum": 1},
+        "return_code": {"type": ["integer", "null"]},
+        "log_path": {"type": "string", "minLength": 1},
+        "checkpoint_directory": {"type": "string", "minLength": 1}
+      }
+    },
+    "error": {"type": ["string", "null"]}
+  }
+}

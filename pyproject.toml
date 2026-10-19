@@ -13,6 +13,9 @@ dependencies = [
 model-doctor-parse = "model_doctor.parser:main"
 model-doctor-diagnose = "model_doctor.diagnosis:main"
 model-doctor-chat = "model_doctor.llm:main"
+model-doctor-plan = "model_doctor.change_plan_llm:main"
+model-doctor-approve = "model_doctor.change_plan:main"
+model-doctor-execute = "model_doctor.executor:main"
 
 [build-system]
 requires = ["setuptools>=68"]

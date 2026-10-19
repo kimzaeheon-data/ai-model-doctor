@@ -49,7 +49,50 @@ python3 -m model_doctor.llm evaluation.json diagnosis.json "전체 결과를 요
 
 M4의 변경 계획은 `schemas/change-plan.schema.json`, 승인 기록은 `schemas/approval.schema.json`을 따릅니다. 허용 설정은 `configs/change-policy.yaml`에서 관리하며, 계획과 승인이 일치할 때만 승인된 변경 목록을 다음 단계에 전달합니다.
 
-현재 단계에서는 어떤 설정 파일도 수정하거나 재학습을 실행하지 않습니다. 자세한 안전 규칙은 `docs/change-plan-design.md`를 참고하세요.
+변경 계획 자체는 어떤 설정 파일도 수정하지 않습니다. 자세한 안전 규칙은 `docs/change-plan-design.md`를 참고하세요.
+
+`warning` 진단이 있는 평가 결과에서 변경 계획을 생성합니다.
+
+```bash
+python3 -m model_doctor.change_plan_llm \
+  evaluation.json diagnosis.json \
+  -o change-plan.json
+```
+
+사용자 결정을 별도의 승인 기록으로 생성합니다.
+
+```bash
+python3 -m model_doctor.change_plan \
+  change-plan.json approve_selected \
+  --change reduce-patience \
+  -o approval.json
+```
+
+## 격리 후보 실험
+
+승인된 변경은 원본 설정을 덮어쓰지 않고 별도의 후보 디렉터리에 적용합니다.
+
+```bash
+python3 -m model_doctor.executor \
+  change-plan.json approval.json \
+  --training-config runs/detect/train/args.yaml \
+  --output-root candidate-runs
+```
+
+위 명령은 후보 설정과 감사 기록만 생성합니다. 실제 YOLO 학습까지 명시적으로 실행하려면 제한 시간을 지정해 `--run-training`을 추가합니다.
+
+```bash
+python3 -m model_doctor.executor \
+  change-plan.json approval.json \
+  --training-config runs/detect/train/args.yaml \
+  --output-root candidate-runs \
+  --run-training \
+  --timeout 3600
+```
+
+후보 디렉터리에는 변경 계획, 승인 기록, 실행 상태, 학습 로그와 후보 체크포인트 경로가 함께 보존됩니다.
+
+실행 전 `source .venv/bin/activate`로 가상환경을 활성화해 동일한 Ultralytics 버전을 사용하세요. 원본 보존과 실패 처리 기준은 `docs/candidate-execution-design.md`를 참고하세요.
 
 ## 테스트
 

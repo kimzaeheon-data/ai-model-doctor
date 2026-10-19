@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
@@ -200,3 +202,55 @@ def authorized_changes(
 
     approved = set(approval["approved_change_ids"])
     return [change for change in plan["changes"] if change["change_id"] in approved]
+
+
+def build_argument_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="변경 계획에 대한 사용자의 결정을 승인 기록으로 저장합니다."
+    )
+    parser.add_argument("plan", help="change-plan.json 파일 경로")
+    parser.add_argument(
+        "decision",
+        choices=["approve_all", "approve_selected", "request_revision", "cancel"],
+        help="사용자 결정",
+    )
+    parser.add_argument(
+        "--change",
+        action="append",
+        default=[],
+        help="일부 승인할 change_id이며 여러 번 지정할 수 있습니다.",
+    )
+    parser.add_argument(
+        "--revision",
+        action="append",
+        default=[],
+        help="수정 요청 내용이며 여러 번 지정할 수 있습니다.",
+    )
+    parser.add_argument("-o", "--output", default="approval.json", help="승인 기록 저장 경로")
+    return parser
+
+
+def main(argv: Iterable[str] | None = None) -> int:
+    arguments = build_argument_parser().parse_args(argv)
+    try:
+        approval = create_approval(
+            load_json(arguments.plan, "변경 계획"),
+            arguments.decision,
+            selected_change_ids=arguments.change,
+            requested_revisions=arguments.revision,
+        )
+        output = Path(arguments.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(
+            json.dumps(approval, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    except ChangePlanError as error:
+        print(f"error: {error}", file=os.sys.stderr)
+        return 1
+    print(f"Created {output}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
