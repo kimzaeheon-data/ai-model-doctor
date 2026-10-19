@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "plan_id": "plan-overfit-001",
+  "created_at": "2026-10-19T09:00:00+09:00",
+  "status": "awaiting_approval",
+  "source": {
+    "evaluation_schema_version": "0.1.0",
+    "diagnosis_schema_version": "0.1.0",
+    "run_name": "sample-overfit"
+  },
+  "summary": "과적합 의심 진단에 따라 조기 종료와 정규화 설정 변경을 검토합니다.",
+  "changes": [
+    {
+      "change_id": "reduce-patience",
+      "category": "training",
+      "parameter": "training.patience",
+      "target_file": "candidate/args.yaml",
+      "before": 100,
+      "after": 30,
+      "human_readable_diff": "patience: 100 → 30",
+      "rationale": "최고 성능 이후 검증 성능 하락 구간을 줄이기 위한 후보 변경입니다.",
+      "referenced_diagnoses": ["suspected_overfitting", "post_peak_degradation"],
+      "expected_effects": ["최고 성능 이후 불필요한 추가 학습을 줄일 가능성이 있습니다."],
+      "risks": ["일시적인 지표 변동 중 학습이 너무 일찍 종료될 가능성이 있습니다."],
+      "estimated_cost": {
+        "level": "high",
+        "training_required": true,
+        "description": "효과 확인을 위해 후보 모델 재학습과 재평가가 필요합니다."
+      }
+    },
+    {
+      "change_id": "increase-weight-decay",
+      "category": "training",
+      "parameter": "training.weight_decay",
+      "target_file": "candidate/args.yaml",
+      "before": 0.0005,
+      "after": 0.001,
+      "human_readable_diff": "weight_decay: 0.0005 → 0.001",
+      "rationale": "과적합 의심을 완화할 수 있는 정규화 강도 후보를 검토합니다.",
+      "referenced_diagnoses": ["suspected_overfitting"],
+      "expected_effects": ["일반화 성능이 개선될 가능성이 있습니다."],
+      "risks": ["정규화가 과도하면 학습 데이터에도 충분히 적합하지 못할 수 있습니다."],
+      "estimated_cost": {
+        "level": "high",
+        "training_required": true,
+        "description": "효과 확인을 위해 후보 모델 재학습과 재평가가 필요합니다."
+      }
+    }
+  ],
+  "limitations": [
+    "제안 값은 후보 실험의 시작점이며 성능 향상을 보장하지 않습니다.",
+    "현재 계획은 어떤 설정 파일도 수정하지 않습니다."
+  ],
+  "approval_required": true,
+  "execution_allowed": false
+}

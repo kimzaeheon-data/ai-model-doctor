@@ -1,0 +1,98 @@
+version: 0.1.0
+
+allowed_targets:
+  training:
+    file: candidate/args.yaml
+    parameters:
+      training.learning_rate_initial:
+        yaml_key: lr0
+        type: number
+        minimum: 0.000001
+        maximum: 0.1
+      training.learning_rate_final_ratio:
+        yaml_key: lrf
+        type: number
+        minimum: 0.0001
+        maximum: 1.0
+      training.batch:
+        yaml_key: batch
+        type: integer
+        minimum: 1
+      training.epochs_configured:
+        yaml_key: epochs
+        type: integer
+        minimum: 1
+      training.imgsz:
+        yaml_key: imgsz
+        type: integer
+        minimum: 32
+      training.optimizer:
+        yaml_key: optimizer
+        type: string
+        enum: [SGD, Adam, AdamW, NAdam, RAdam, RMSProp, auto]
+      training.weight_decay:
+        yaml_key: weight_decay
+        type: number
+        minimum: 0.0
+        maximum: 0.1
+      training.patience:
+        yaml_key: patience
+        type: integer
+        minimum: 0
+      training.augmentation.mosaic:
+        yaml_key: mosaic
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+      training.augmentation.mixup:
+        yaml_key: mixup
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+      training.augmentation.fliplr:
+        yaml_key: fliplr
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+      training.augmentation.flipud:
+        yaml_key: flipud
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+      training.augmentation.degrees:
+        yaml_key: degrees
+        type: number
+        minimum: 0.0
+        maximum: 180.0
+      training.augmentation.translate:
+        yaml_key: translate
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+      training.augmentation.scale:
+        yaml_key: scale
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+  inference:
+    file: candidate/inference.yaml
+    parameters:
+      inference.confidence:
+        yaml_key: conf
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+      inference.iou:
+        yaml_key: iou
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+
+protected_areas:
+  - source_code
+  - dataset_files
+  - labels
+  - model_architecture
+  - checkpoint_weights
+  - original_run_files
+  - deployment_config

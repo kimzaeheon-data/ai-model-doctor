@@ -12,6 +12,7 @@ Ultralytics YOLO 객체 탐지 학습 결과를 표준 JSON으로 변환하고 �
 - `evaluation.json` 생성
 - 규칙 기반 `diagnosis.json` 생성
 - OpenAI Responses API를 통한 구조화된 챗봇 응답 생성
+- 변경 허용 정책과 사용자 승인 게이트
 
 ## Parser 실행
 
@@ -43,6 +44,12 @@ python3 -m model_doctor.llm evaluation.json diagnosis.json "전체 결과를 요
 ```
 
 응답은 `schemas/chat-response.schema.json`을 따르며, 챗봇은 규칙 엔진의 판정을 설명할 뿐 상태를 다시 판정하거나 모델 설정을 변경하지 않습니다.
+
+## 변경 계획 및 승인
+
+M4의 변경 계획은 `schemas/change-plan.schema.json`, 승인 기록은 `schemas/approval.schema.json`을 따릅니다. 허용 설정은 `configs/change-policy.yaml`에서 관리하며, 계획과 승인이 일치할 때만 승인된 변경 목록을 다음 단계에 전달합니다.
+
+현재 단계에서는 어떤 설정 파일도 수정하거나 재학습을 실행하지 않습니다. 자세한 안전 규칙은 `docs/change-plan-design.md`를 참고하세요.
 
 ## 테스트
 

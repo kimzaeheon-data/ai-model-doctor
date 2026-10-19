@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-model-doctor.local/schemas/approval.schema.json",
+  "title": "AI Model Doctor Approval Record",
+  "description": "특정 변경 계획과 그 승인 범위를 연결하는 기록",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approval_id",
+    "created_at",
+    "actor",
+    "plan_id",
+    "plan_digest",
+    "decision",
+    "approved_change_ids",
+    "requested_revisions",
+    "execution_authorized"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "approval_id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]{8,64}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "actor": {"const": "user"},
+    "plan_id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]{8,64}$"},
+    "plan_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "decision": {
+      "enum": ["approve_all", "approve_selected", "request_revision", "cancel"]
+    },
+    "approved_change_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "requested_revisions": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "execution_authorized": {"type": "boolean"}
+  }
+}
